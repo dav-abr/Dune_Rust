@@ -1,17 +1,13 @@
-use bevy::animation::Keyframes::Translation;
 use bevy::prelude::*;
-
-const MAP_WIDTH: i8 = 64;
-const MAP_HEIGHT: i8 = 64;
-const CELL_SIZE: f32 = 50.0_f32;
+use crate::settings::*;
 
 #[derive(Component)]
 struct Map {}
 
 #[derive(Component)]
-struct Cell {
-    i: i8,
-    j: i8,
+pub struct Cell {
+    pub i: i8,
+    pub j: i8,
 }
 
 pub struct MapPlugin;
