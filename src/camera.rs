@@ -15,16 +15,14 @@ struct GameCursor {}
 fn setup_cursor(
     mut windows: Query<&mut Window>,
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    asset_server: Res<AssetServer>
 ) {
     let mut window: Mut<Window> = windows.single_mut();
     window.cursor.visible = false;
 
-    let image = asset_server.load("cursor.png").into();
-
     commands.spawn((
         ImageBundle {
-            image,
+            image: asset_server.load("cursor.png").into(),
             style: Style {
                 position_type: PositionType::Absolute,
                 ..default()
