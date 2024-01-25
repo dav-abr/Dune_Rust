@@ -5,7 +5,7 @@ pub struct CursorPlugin;
 impl Plugin for CursorPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, (setup_camera, setup_cursor).chain())
-            .add_systems(Update, move_cursor);
+            .add_systems(Update, (move_cursor, move_camera).chain());
     }
 }
 
@@ -41,9 +41,22 @@ fn setup_camera(mut commands: Commands) {
 
 fn move_cursor(window: Query<&Window>, mut cursor: Query<&mut Style, With<GameCursor>>) {
     let window: &Window = window.single();
+
     if let Some(position) = window.cursor_position() {
         let mut img_style = cursor.single_mut();
         img_style.left = Val::Px(position.x);
         img_style.top = Val::Px(position.y);
+    }
+}
+
+fn move_camera(window: Query<&Window>, mut camera: Query<&mut Transform, With<Camera2d>>) {
+    let window: &Window = window.single();
+
+    if let Some(position) = window.cursor_position() {
+        if (position.x > window.width() - 60.0) & (position.x < window.width()) {
+            for mut transform in camera.iter_mut() {
+                transform.translation.x += 5.0;
+            }
+        }
     }
 }
