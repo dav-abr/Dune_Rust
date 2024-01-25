@@ -19,11 +19,12 @@ fn setup_cursor(
 ) {
     let mut window: Mut<Window> = windows.single_mut();
     window.cursor.visible = false;
-    let cursor_spawn: Vec3 = Vec3::ZERO;
+
+    let image = asset_server.load("cursor.png").into();
 
     commands.spawn((
         ImageBundle {
-            image: asset_server.load("cursor.png").into(),
+            image,
             style: Style {
                 position_type: PositionType::Absolute,
                 ..default()
@@ -49,14 +50,25 @@ fn move_cursor(window: Query<&Window>, mut cursor: Query<&mut Style, With<GameCu
     }
 }
 
-fn move_camera(window: Query<&Window>, mut camera: Query<&mut Transform, With<Camera2d>>) {
+fn move_camera(window: Query<&Window>, mut camera_query: Query<&mut Transform, With<Camera2d>>) {
     let window: &Window = window.single();
+    let mut transform = camera_query.get_single_mut().unwrap();
 
     if let Some(position) = window.cursor_position() {
         if (position.x > window.width() - 60.0) & (position.x < window.width()) {
-            for mut transform in camera.iter_mut() {
-                transform.translation.x += 5.0;
-            }
+            transform.translation.x += 5.0;
+        }
+
+        if (position.x < 60.0) & (position.x > 0.0) {
+            transform.translation.x -= 5.0;
+        }
+
+        if (position.y > window.height() - 60.0) & (position.y < window.height()) {
+            transform.translation.y -= 5.0;
+        }
+
+        if (position.y < 60.0) & (position.y > 0.0) {
+            transform.translation.y += 5.0;
         }
     }
 }
