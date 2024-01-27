@@ -10,7 +10,13 @@ impl Plugin for CursorPlugin {
 }
 
 fn setup_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle {
+        transform: Transform {
+            scale: Vec3::splat(0.7),
+            ..default()
+        },
+        ..default()
+    });
 }
 
 fn move_camera(window: Query<&Window>, mut camera_query: Query<&mut Transform, With<Camera2d>>) {

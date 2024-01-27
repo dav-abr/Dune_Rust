@@ -22,6 +22,16 @@ struct GreetTimer(Timer);
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, ImagesPlugin, CursorPlugin, HUDPlugin, ControlsPlugin, MapPlugin, CreaturesPlugin))
+        .add_plugins((
+            DefaultPlugins.set(
+                ImagePlugin::default_nearest()
+            ),
+            ImagesPlugin,
+            CursorPlugin,
+            HUDPlugin,
+            ControlsPlugin,
+            MapPlugin,
+            CreaturesPlugin
+        ))
         .run();
 }
