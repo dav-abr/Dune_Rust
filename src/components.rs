@@ -13,3 +13,15 @@ pub struct Movable {}
 
 #[derive(Component)]
 pub struct GameCursor {}
+
+#[derive(Component)]
+pub struct SelectedCreature {}
+
+#[derive(Component)]
+pub struct Dimensions {
+    pub width: i8,
+    pub height: i8,
+}
+
+#[derive(Component)]
+pub struct SelectCursor {}

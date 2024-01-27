@@ -11,10 +11,11 @@ impl Plugin for ControlsPlugin {
 }
 
 fn update_controls(
+    mut commands: Commands,
     buttons: Res<Input<MouseButton>>,
     q_windows: Query<&Window, With<PrimaryWindow>>,
     camera_query: Query<(&Camera, &GlobalTransform), With<Camera2d>>,
-    creatures_query: Query<&Position, With<Movable>>
+    creatures_query: Query<(Entity, &Position), With<Movable>>
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         let (camera, transform) = camera_query.single();
@@ -25,16 +26,19 @@ fn update_controls(
                 ((cursor_position.y + CELL_SIZE / 2.0) / CELL_SIZE) as i8
             );
 
-            let creatures = creatures_query.iter().filter(|position| position.i == i && position.j == j).collect::<Vec<_>>();
-            let creature_position = creatures.get(0);
+            for (creature_entity, creature_position) in creatures_query.iter() {
+                let creature_commands_option = commands.get_entity(creature_entity.clone());
 
-            match creature_position {
-                Some(position) => {
-                    println!("{:?}", position);
-                },
+                match creature_commands_option {
+                    Some(mut creature_commands) => {
+                        if creature_position.i == i && creature_position.j == j {
+                            creature_commands.insert(SelectedCreature {});
+                        } else {
+                            creature_commands.remove::<SelectedCreature>();
+                        }
+                    }
 
-                None => {
-                    println!("None");
+                    None => {}
                 }
             }
         }

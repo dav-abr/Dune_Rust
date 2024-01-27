@@ -5,8 +5,9 @@ use crate::components::*;
 #[derive(Bundle)]
 struct CreatureBundle {
     movable: Movable,
-    position: Position,
     sprite: SpriteBundle,
+    position: Position,
+    dimensions: Dimensions
 }
 
 pub struct CreaturesPlugin;
@@ -22,6 +23,10 @@ fn setup_creatures(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(
         CreatureBundle {
             movable: Movable {},
+            dimensions: Dimensions {
+                width: 1,
+                height: 1
+            },
             position: Position {
                 i: 0,
                 j: 0,
