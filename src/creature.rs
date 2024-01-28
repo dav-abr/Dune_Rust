@@ -106,8 +106,8 @@ fn move_creature(
 
                 creature_path.path.pop_front();
             } else {
-                creature_transform.translation.x += 1.0 * (next_cell.j - creature_position.j).abs() as f32;
-                creature_transform.translation.y += 1.0 * (next_cell.i - creature_position.i).abs() as f32;
+                creature_transform.translation.x += 1.0 * (next_cell.j - creature_position.j) as f32;
+                creature_transform.translation.y += 1.0 * (next_cell.i - creature_position.i) as f32;
             }
         }
     }

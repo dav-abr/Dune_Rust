@@ -32,9 +32,7 @@ impl Position {
                 true
             })
             .collect();
-
-        println!("{:?}", result);
-
+        
         result
     }
 }
