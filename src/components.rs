@@ -32,7 +32,7 @@ impl Position {
                 true
             })
             .collect();
-        
+
         result
     }
 }
@@ -49,7 +49,10 @@ pub struct PathToGo {
 }
 
 #[derive(Component)]
-pub struct Movable {}
+pub struct Movable {
+    pub angle: f32,
+    pub to_angle: f32,
+}
 
 #[derive(Component)]
 pub struct GameCursor {}
