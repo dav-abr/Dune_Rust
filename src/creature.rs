@@ -1,13 +1,16 @@
+use std::array;
 use bevy::prelude::*;
 use crate::settings::*;
 use crate::components::*;
+use std::collections::*;
+use pathfinding::prelude::*;
 
 #[derive(Bundle)]
 struct CreatureBundle {
     movable: Movable,
     sprite: SpriteBundle,
     position: Position,
-    dimensions: Dimensions
+    dimensions: Dimensions,
 }
 
 pub struct CreaturesPlugin;
@@ -19,19 +22,26 @@ impl Plugin for CreaturesPlugin {
     }
 }
 
-fn setup_creatures(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn setup_creatures(mut commands: Commands, asset_server: Res<AssetServer>, creatures_query: Query<&Position, With<Movable>>) {
+    let mut positions: Vec<Position> = vec![];
+
+    for position in creatures_query.iter() {
+        positions.push(position.clone());
+    }
+
+    let GOAL: Position = Position::new(4, 6);
+    let path = astar(&Position::new(0, 0), |p| p.successors(&positions), |p| p.distance(&GOAL) / 3, |p| *p == GOAL);
+
     commands.spawn(
         CreatureBundle {
             movable: Movable {},
             dimensions: Dimensions {
                 width: 1,
-                height: 1
+                height: 1,
             },
             position: Position {
                 i: 0,
                 j: 0,
-                x: 0.0,
-                y: 0.0,
             },
             sprite: SpriteBundle {
                 texture: asset_server.load("moto_straight_up.png").into(),
@@ -47,19 +57,63 @@ fn setup_creatures(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..default()
             },
         }
+    ).insert(PathToGo {
+        path: VecDeque::from_iter(
+            path.unwrap().0
+        )
+    });
+
+
+    commands.spawn(
+        CreatureBundle {
+            movable: Movable {},
+            dimensions: Dimensions {
+                width: 1,
+                height: 1,
+            },
+            position: Position {
+                i: 1,
+                j: 1,
+            },
+            sprite: SpriteBundle {
+                texture: asset_server.load("moto_straight_up.png").into(),
+                transform: Transform {
+                    translation: Vec3 {
+                        x: 1.0 * CELL_SIZE,
+                        y: 1.0 * CELL_SIZE,
+                        z: 2.0,
+                    },
+                    scale: Vec3::splat(CELL_SIZE / 96.0),
+                    ..default()
+                },
+                ..default()
+            },
+        }
     );
 }
 
 fn move_creature(
-    mut creature_query: Query<&mut Position, With<Movable>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    mut creature_query: Query<(&mut Position, &mut Transform, &mut PathToGo), With<PathToGo>>,
 ) {
-    if keyboard_input.pressed(KeyCode::D) {
-        let mut creature_position = creature_query.get_single_mut().unwrap();
+    for (mut creature_position, mut creature_transform, mut creature_path) in creature_query.iter_mut() {
+        if let Some(next_cell) = creature_path.path.get(0) {
+            let x = next_cell.j as f32 * CELL_SIZE;
+            let y = next_cell.i as f32 * CELL_SIZE;
 
-        creature_position.j += 1;
+            if creature_transform.translation.x == x && creature_transform.translation.y == y {
+                creature_position.i = next_cell.i;
+                creature_position.j = next_cell.j;
+
+                creature_path.path.pop_front();
+            } else {
+                creature_transform.translation.x += 1.0 * (next_cell.j - creature_position.j).abs() as f32;
+                creature_transform.translation.y += 1.0 * (next_cell.i - creature_position.i).abs() as f32;
+            }
+        }
     }
 }
+
+fn animate_to_cell() {}
 
 fn bound_creatures(mut creature_query: Query<&mut Position, Changed<Position>>) {
     let max_i: i8 = MAP_WIDTH - 1;
@@ -69,7 +123,6 @@ fn bound_creatures(mut creature_query: Query<&mut Position, Changed<Position>>) 
 
 
     for mut position in creature_query.iter_mut() {
-
         if position.i > max_i {
             position.i = max_i;
         }
