@@ -26,8 +26,8 @@ fn setup_map(mut commands: Commands, asset_server: Res<AssetServer>) {
                     texture: asset_server.load("concrete.png").into(),
                     transform: Transform {
                         translation: Vec3 {
-                            x: i as f32 * CELL_SIZE,
-                            y: j as f32 * CELL_SIZE,
+                            x: j as f32 * CELL_SIZE,
+                            y: i as f32 * CELL_SIZE,
                             z: 1.0,
                         },
                         scale: Vec3::splat(CELL_SIZE / 32.0),

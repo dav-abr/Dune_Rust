@@ -1,4 +1,7 @@
-use bevy::prelude::*;
+use bevy::{
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
+    prelude::*,
+};
 mod camera;
 mod map;
 mod images;
@@ -26,6 +29,8 @@ fn main() {
             DefaultPlugins.set(
                 ImagePlugin::default_nearest()
             ),
+            FrameTimeDiagnosticsPlugin,
+            LogDiagnosticsPlugin::default(),
             ImagesPlugin,
             CursorPlugin,
             HUDPlugin,

@@ -21,7 +21,7 @@ fn update_controls(
         let (camera, transform) = camera_query.single();
 
         if let Some(cursor_position) = q_windows.single().cursor_position().and_then(|cursor| camera.viewport_to_world_2d(transform, cursor)) {
-            let (i, j) = (
+            let (j, i) = (
                 ((cursor_position.x + CELL_SIZE / 2.0) / CELL_SIZE) as i8,
                 ((cursor_position.y + CELL_SIZE / 2.0) / CELL_SIZE) as i8
             );
